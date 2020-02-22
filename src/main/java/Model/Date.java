@@ -1,3 +1,5 @@
+package Model;
+
 public class Date {
     private int day;
     private int month;
@@ -68,7 +70,7 @@ public class Date {
 
     @Override
     public String toString() {
-        return "Date{" +
+        return "Models.Date{" +
                 "day=" + day +
                 ", month=" + month +
                 ", year=" + year +
