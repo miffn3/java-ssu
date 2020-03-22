@@ -1,4 +1,4 @@
-import Utils.CLI;
+import utils.CLI;
 
 public class Main
 {

@@ -1,4 +1,4 @@
-package Model;
+package tasks.model;
 
 import java.util.Objects;
 

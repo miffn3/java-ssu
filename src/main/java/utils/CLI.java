@@ -1,7 +1,7 @@
-package Utils;
+package utils;
 
-import Model.Contact;
-import Model.PhoneBook;
+import bank.connection.DBConnection;
+import tasks.model.PhoneBook;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CLI {
+
+    private  static boolean setUpIsDone = false;
+
     public void greeting() {
         System.out.println("Hello.");
         chooseVar();
@@ -24,6 +27,7 @@ public class CLI {
 
         if (k == 2) {
             JDBCTaskVars();
+            setUp();
             chooseVar();
         }
 
@@ -241,5 +245,16 @@ public class CLI {
             io.printStackTrace();
         }
         return tmp;
+    }
+
+    private static void setUp() {
+        if (!setUpIsDone) {
+            boolean createConnection = DBConnection.createConnection();
+            if(!createConnection) {
+                throw new RuntimeException("Can't create connection, stop");
+            }
+            setUpIsDone = true;
+            DBConnection.createTables();
+        }
     }
 }

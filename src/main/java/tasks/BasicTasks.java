@@ -1,7 +1,7 @@
-package Tasks;
+package tasks;
 
-import Model.Point;
-import Utils.Utils;
+import tasks.model.Point;
+import utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

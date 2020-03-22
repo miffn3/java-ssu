@@ -1,31 +1,27 @@
 package bank.repository.impl;
 
 import bank.connection.DBConnection;
-import bank.entity.User;
-import bank.repository.iface.UserRepository;
+import bank.entity.Operation;
+import bank.repository.iface.OperationRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class UserRepositoryImpl implements UserRepository {
+public class OperationRepositoryImpl implements OperationRepository {
     @Override
-    public User getUserById(String id) throws SQLException {
+    public Operation getOperationById(String id) throws SQLException {
         return null;
     }
 
     @Override
-    public User updateUser(User user) throws SQLException {
+    public Operation insertOperation(Operation operation) throws SQLException {
         return null;
     }
 
     @Override
-    public User insertUser(User user) throws SQLException {
-        return null;
-    }
-
-    public void deleteUsers() throws SQLException {
-        String query = "delete from user";
+    public void deleteOperations() throws SQLException {
+        String query = "delete from operation";
         Connection con = DBConnection.getConnection();
         PreparedStatement stmt = con.prepareStatement(query);
         stmt.executeUpdate();

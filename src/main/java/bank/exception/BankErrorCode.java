@@ -1,16 +1,15 @@
 package bank.exception;
 
-public enum LoginErrorCode  {
+public enum BankErrorCode {
 
     USER_WRONG_LOGIN("Wrong login %s"),
-    SESSION_ACCESS_COOKIE("User doesn't have permission to do this"),
-    SESSION_WRONG_COOKIE("Session with this cookie doesn't exist"),
+    USER_ALREADY_EXIST("Incorrect count of product or client doesn't have enough money")
     ;
 
 
     private String errorString;
 
-    LoginErrorCode(String errorString) {
+    BankErrorCode(String errorString) {
         this.errorString = errorString;
     }
 

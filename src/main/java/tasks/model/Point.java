@@ -1,4 +1,4 @@
-package Model;
+package tasks.model;
 
 public class Point {
     private int x;
