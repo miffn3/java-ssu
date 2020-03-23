@@ -1,12 +1,9 @@
 package bank.connection;
 
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class DBConnection {
     private static java.sql.Connection connection;
