@@ -52,6 +52,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByPhone(String phone) {
+        User user;
+        try {
+            user = userRepository.getUserByPhone(phone);
+        } catch (Exception ex) {
+            return null;
+        }
+        return user;
+    }
+
+    @Override
     public boolean existUserByLogin(String login) {
         User user = null;
         try {

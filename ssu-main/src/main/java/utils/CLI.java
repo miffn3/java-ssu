@@ -109,6 +109,11 @@ public class CLI {
         }
 
         if (k == 6) {
+            showHistory();
+            JDBCTaskVars();
+        }
+
+        if (k == 7) {
             loggedInUserLogin = null;
             return;
         }
@@ -123,7 +128,7 @@ public class CLI {
             to = 5;
             contactsMenu();
         } else if (usage.equals("JDBCTaskVars")) {
-            to = 6;
+            to = 7;
             JDBCTaskMenu();
         } else if (usage.equals("updateContact")){
             updateContactMenu();
@@ -183,10 +188,13 @@ public class CLI {
     }
 
     private void createAccount() {
-        if(loggedInUserLogin != null)
-        {
-            System.out.println("Enter currency (RUB,EUR,USD):");
+        if(loggedInUserLogin != null) {
+            System.out.println("Enter currency (RUB,EUR,USD): ");
             String accCode = readLine();
+            if (!accCode.equals("RUB")  && !accCode.equals("EUR") && !accCode.equals("USD")){
+                System.out.println("Wrong currency. Try again.");
+                return;
+            }
             String id = accountService.createAccount(loggedInUserLogin, accCode);
             if (id == null)
             {
@@ -221,56 +229,124 @@ public class CLI {
     }
 
     private void addMoney() {
-        if(loggedInUserLogin != null)
-        {
-            System.out.println("Which account do you want to replenish? Enter number of account.");
-            List<Account> accounts = accountService.listOfUserAccounts(loggedInUserLogin);
-            if (accounts == null)
-            {
-                System.out.println("Accounts haven't been found");
+        if(loggedInUserLogin != null) {
+            System.out.println("Which account do you want to replenish? Enter number of the account.");
+            Account account = chooseAccountFromList();
+            if (account == null)
                 return;
-            }
-            for (int i = 0; i < accounts.size(); i++)
-            {
-                Account current = accounts.get(i);
-                int index = i + 1;
-                System.out.println(index + ". Amount: " + current.getAmount() + ", currency " + current.getAccCode());
-            }
-            int var = 0;
-            String tmp = readLine();
 
-            if (StringUtils.isNumeric(tmp)) {
-                var = Integer.parseInt(tmp);
-            }
-            if (var == 0 || var > accounts.size()){
-                System.out.println("Wrong account number. Try again.");
-                return;
-            }
             System.out.println("Enter currency you want to add (RUB,EUR,USD):");
             String chosenCurrency = readLine();
+            if (!chosenCurrency.equals("RUB")  && !chosenCurrency.equals("EUR") && !chosenCurrency.equals("USD")){
+                System.out.println("Wrong currency. Try again.");
+                return;
+            }
             System.out.println("How much do you want to add?");
+            String amountString = readLine();
+
+            if (!StringUtils.isNumeric(amountString)) {
+                System.out.println("Wrong amount, enter number, try again.");
+                return;
+            }
+
+            double amount = Double.parseDouble(amountString);
+            if (amount <= 0.0) {
+                System.out.println("Wrong amount, enter positive number, try again.");
+                return;
+            }
+            BigDecimal val = BigDecimal.valueOf(amount);
+            BigDecimal resultAmount = accountService.increaseAmount(account,
+               val, chosenCurrency);
+            if (resultAmount != null) {
+                System.out.println("Amount after increase is " + resultAmount + " " + account.getAccCode());
+            } else {
+                System.out.println("Couldn't add money to account");
+            }
+        } else {
+            System.out.println("Log in first!");
+        }
+    }
+
+    private void transferMoney() {
+        if(loggedInUserLogin != null) {
+            System.out.println("From which account do you want to transfer? Enter number of the account.");
+            Account accountFrom = chooseAccountFromList();
+            if (accountFrom == null)
+                return;
+
+            System.out.println("How much do you want to transfer?");
             String amountString = readLine();
             if (!StringUtils.isNumeric(amountString)) {
                 System.out.println("Wrong amount, enter number, try again.");
                 return;
             }
-            int amount = Integer.parseInt(amountString);
-            if(amount <= 0) {
+            double amount = Double.parseDouble(amountString);
+            if(amount <= 0.0) {
                 System.out.println("Wrong amount, enter positive number, try again.");
                 return;
             }
 
-            BigDecimal amountAfterIncrease = accountService.increaseAmount(accounts.get(var - 1),
-                BigDecimal.valueOf(amount), chosenCurrency);
-            if (amountAfterIncrease != null) {
-                System.out.println("Amount after increase is " + amountAfterIncrease);
-            } else {
-                System.out.println("Couldn't add money to account");
+            System.out.println("How do you want to transfer, choose one : \n1.By phone to another user. \n2.Between " +
+                    "your accounts.");
+            int var;
+            String tmp = readLine();
+
+            if (!StringUtils.isNumeric(tmp)) {
+                System.out.println("Wrong variant. Try again.");
+                return;
             }
+            var = Integer.parseInt(tmp);
+
+            if (var == 0 || var > 2){
+                System.out.println("Wrong variant. Try again.");
+                return;
+            }
+
+            if (var == 1) {
+                System.out.println("Enter phone of another user: ");
+                String phone = readLine();
+                String res = accountService.moneyTransfer(accountFrom, phone, BigDecimal.valueOf(amount));
+                if (res == null){
+                    System.out.println("Couldn't transfer money to another user.");
+                } else {
+                    System.out.println("Successfully transferred " + res + " to user with phone: " + phone);
+                }
+            } else {
+                System.out.println("Choose from your accounts, where you want to transfer: ");
+                Account accountTo = chooseAccountFromList();
+                if (accountTo == null)
+                    return;
+                BigDecimal resultAmount = accountService.moneyTransfer(accountFrom, accountTo, BigDecimal.valueOf(amount));
+                if (resultAmount != null) {
+                    System.out.println("Amount after transfer is " + resultAmount + " " + accountFrom.getAccCode());
+                } else {
+                    System.out.println("Couldn't transfer money to account.");
+                }
+            }
+        } else {
+            System.out.println("Log in first!");
         }
     }
 
-    private void transferMoney() {}
+    private void showHistory() {
+        if(loggedInUserLogin != null) {
+            System.out.println("History of which account do you want to see? Enter number of the account.");
+            Account accountFrom = chooseAccountFromList();
+            if (accountFrom == null)
+                return;
+
+            List<String> operations = operationService.getHistory(accountFrom.getId().toString());
+            if (operations == null) {
+                System.out.println("Couldn't find any operation.");
+                return;
+            }
+            for (String operation : operations) {
+                System.out.println(operation);
+            }
+        } else {
+            System.out.println("Log in first!");
+        }
+    }
 
     private void addContact() {
         System.out.println("Enter phone number: ");
@@ -339,7 +415,8 @@ public class CLI {
         System.out.println("3 : Create account");
         System.out.println("4 : Add money");
         System.out.println("5 : Transfer money");
-        System.out.println("6 : exit");
+        System.out.println("6 : Show history");
+        System.out.println("7 : exit");
     }
 
     private String readLine() {
@@ -365,15 +442,42 @@ public class CLI {
             if(userService == null)
                 userService = new UserServiceImpl(new UserRepositoryImpl());
 
-            if(accountService == null)
-                accountService = new AccountServiceImpl(new AccountRepositoryImpl(), userService);
-
             if(operationService == null)
                 operationService = new OperationServiceImpl(new OperationRepositoryImpl());
+
+            if(accountService == null)
+                accountService = new AccountServiceImpl(new AccountRepositoryImpl(), userService, operationService);
 
             DBConnection.createTables();
             setUpIsDone = true;
         }
+    }
+
+    private Account chooseAccountFromList() {
+        List<Account> accounts = accountService.listOfUserAccounts(loggedInUserLogin);
+        if (accounts == null || accounts.isEmpty()) {
+            System.out.println("Accounts haven't been found");
+            return null;
+        }
+        for (int i = 0; i < accounts.size(); i++) {
+            Account current = accounts.get(i);
+            int index = i + 1;
+            System.out.println(index + ". Amount: " + current.getAmount() + ", currency " + current.getAccCode());
+        }
+        int var;
+        String tmp = readLine();
+
+        if (!StringUtils.isNumeric(tmp)) {
+            System.out.println("Wrong amount, enter number, try again.");
+            return null;
+        }
+        var = Integer.parseInt(tmp);
+
+        if (var == 0 || var > accounts.size()){
+            System.out.println("Wrong account number. Try again.");
+            return null;
+        }
+        return accounts.get(var - 1);
     }
 
 }

@@ -1,10 +1,10 @@
 package bank.service.iface;
 
-import bank.entity.Operation;
-
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OperationService {
-	String addOperation(Operation operation);
-	List<String> getHistory(String login);
+	void addOperation(String date, String currency, String accountFrom, String accountTo, BigDecimal amount,
+	                    BigDecimal moneyBefore, BigDecimal moneyAfter);
+	List<String> getHistory(String accountId);
 }

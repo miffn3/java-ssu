@@ -45,7 +45,7 @@ public class DBConnection {
                 "CREATE TABLE account " +
                 "(id VARCHAR(50) NOT NULL, " +
                 "client_id VARCHAR(50) NOT NULL, " +
-                "amount INT(11) NOT NULL, " +
+                "amount Decimal NOT NULL, " +
                 "acc_code VARCHAR(50) NOT NULL, " +
                 "PRIMARY KEY (id))";
 
@@ -63,9 +63,9 @@ public class DBConnection {
                 "currency VARCHAR(50) NOT NULL, " +
                 "account_from VARCHAR(50) NOT NULL, " +
                 "account_to VARCHAR(50) NOT NULL, " +
-                "amount INT(11) NOT NULL, " +
-                "money_before INT(11) NOT NULL, " +
-                "money_after INT(11) NOT NULL, " +
+                "amount Decimal NOT NULL, " +
+                "money_before Decimal NOT NULL, " +
+                "money_after Decimal NOT NULL, " +
                 "PRIMARY KEY (id))";
 
         Connection con = DBConnection.getConnection();

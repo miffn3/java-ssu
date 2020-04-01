@@ -16,7 +16,7 @@ public class Account {
     public Account(UUID id, String clientId, BigDecimal amount, String accCode) {
         this.id = id;
         this.clientId = clientId;
-        this.amount = BigDecimal.valueOf(0);
+        this.amount = amount;
         this.accCode = accCode;
     }
 
@@ -73,5 +73,15 @@ public class Account {
     @Override
     public int hashCode() {
         return Objects.hash(id, clientId, amount, accCode);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", clientId='" + clientId + '\'' +
+                ", amount=" + amount +
+                ", accCode='" + accCode + '\'' +
+                '}';
     }
 }

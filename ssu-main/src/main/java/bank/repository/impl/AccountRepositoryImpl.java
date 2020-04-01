@@ -64,7 +64,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         PreparedStatement stmt = con.prepareStatement(query);
         stmt.setString(1, account.getClientId());
         stmt.setBigDecimal(2, account.getAmount());
-        stmt.setString(3,account.getAccCode());
+        stmt.setString(3, account.getAccCode());
         stmt.setString(4, account.getId().toString());
         stmt.executeUpdate();
         stmt.close();
@@ -75,7 +75,6 @@ public class AccountRepositoryImpl implements AccountRepository {
         String query = "insert into account values(?,?,?,?)";
         Connection con = DBConnection.getConnection();
         PreparedStatement stmt = con.prepareStatement(query);
-
         stmt.setString(1, account.getId().toString());
         stmt.setString(2, account.getClientId());
         stmt.setBigDecimal(3, account.getAmount());

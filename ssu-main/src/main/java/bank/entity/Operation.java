@@ -14,9 +14,6 @@ public class Operation {
     private BigDecimal moneyBefore;
     private BigDecimal moneyAfter;
 
-    public Operation() {
-    }
-
     public Operation(UUID id, String date, String currency, String accountFrom, String accountTo, BigDecimal amount,
                      BigDecimal moneyBefore, BigDecimal moneyAfter) {
         this.id = id;
@@ -111,5 +108,23 @@ public class Operation {
     @Override
     public int hashCode() {
         return Objects.hash(id, date, currency, accountFrom, accountTo, amount, moneyBefore, moneyAfter);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Date: ")
+                .append(date)
+                .append("; Transferred to: ")
+                .append(accountTo)
+                .append("; Money before: ")
+                .append(moneyBefore)
+                .append(" ")
+                .append(currency)
+                .append("; Money after: ")
+                .append(moneyAfter)
+                .append(" ")
+                .append(currency);
+        return sb.toString();
     }
 }

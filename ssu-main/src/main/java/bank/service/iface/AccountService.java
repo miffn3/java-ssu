@@ -9,5 +9,6 @@ public interface AccountService {
     String createAccount(String login, String accCode);
     BigDecimal increaseAmount(Account account, BigDecimal amount, String chosenCurrency);
     String moneyTransfer(Account account, String phone, BigDecimal amount);
+    BigDecimal moneyTransfer(Account accountFrom, Account accountTo, BigDecimal amount);
     List<Account> listOfUserAccounts(String login);
 }
