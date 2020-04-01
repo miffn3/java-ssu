@@ -1,7 +1,6 @@
 package bank.repository.impl;
 
 import bank.connection.DBConnection;
-import bank.entity.AccCode;
 import bank.entity.Account;
 import bank.repository.iface.AccountRepository;
 import org.junit.AfterClass;
@@ -60,7 +59,7 @@ public class AccountRepositoryImplTest {
         String id = UUID.randomUUID().toString();
         String clientId = UUID.randomUUID().toString();
         BigDecimal amount = BigDecimal.valueOf(5000);
-        String accCode = AccCode.RUB.toString();
+        String accCode = "RUB";
         Account account = new Account(UUID.fromString(id), clientId, amount, accCode);
         List<Account> accounts = null;
 

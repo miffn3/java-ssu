@@ -56,15 +56,58 @@ public class UserRepositoryImpl implements UserRepository {
         stmt.setString(3, user.getPassword());
         stmt.setString(4,user.getAddress());
         stmt.setString(5,user.getPhone());
-        boolean res = stmt.execute();
+        stmt.execute();
         stmt.close();
     }
 
+    @Override
     public void deleteUsers() throws SQLException {
         String query = "delete from user";
         Connection con = DBConnection.getConnection();
         PreparedStatement stmt = con.prepareStatement(query);
         stmt.executeUpdate();
         stmt.close();
+    }
+
+    @Override
+    public User getUserByPhone(String phone) throws SQLException
+    {
+        String query = "select * from user where phone = ?";
+        Connection con = DBConnection.getConnection();
+        PreparedStatement stmt = con.prepareStatement(query);
+        stmt.setString(1, phone);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if(rs.next()) {
+            UUID id = UUID.fromString(rs.getString("id"));
+            String login = rs.getString("login");
+            String password = rs.getString("password");
+            String address = rs.getString("address");
+            return new User(id, login, password, address, phone);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public User getUserByLogin(String login) throws SQLException
+    {
+        String query = "select * from user where login = ?";
+        Connection con = DBConnection.getConnection();
+        PreparedStatement stmt = con.prepareStatement(query);
+        stmt.setString(1, login);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if(rs.next()) {
+            UUID id = UUID.fromString(rs.getString("id"));
+            String phone = rs.getString("phone");
+            String password = rs.getString("password");
+            String address = rs.getString("address");
+            return new User(id, login, password, address, phone);
+        } else {
+            return null;
+        }
     }
 }

@@ -1,11 +1,13 @@
 package bank.service.iface;
 
+import bank.entity.Account;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface AccountService {
-    String createAccount(String userId, String accCode);
-    String increaseAmount(BigDecimal amount);
-    String moneyTransfer(String phone, BigDecimal amount);
-    List<String> showHistory(String userId);
+    String createAccount(String login, String accCode);
+    BigDecimal increaseAmount(Account account, BigDecimal amount, String chosenCurrency);
+    String moneyTransfer(Account account, String phone, BigDecimal amount);
+    List<Account> listOfUserAccounts(String login);
 }

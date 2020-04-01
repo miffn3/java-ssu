@@ -20,6 +20,13 @@ public class Account {
         this.accCode = accCode;
     }
 
+    public Account(UUID id, String clientId, String accCode) {
+        this.id = id;
+        this.clientId = clientId;
+        this.amount = BigDecimal.valueOf(0);
+        this.accCode = accCode;
+    }
+
     public UUID getId() {
         return id;
     }

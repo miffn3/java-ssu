@@ -1,7 +1,6 @@
 package bank.repository.impl;
 
 import bank.connection.DBConnection;
-import bank.entity.Account;
 import bank.entity.Operation;
 import bank.repository.iface.OperationRepository;
 
@@ -105,7 +104,7 @@ public class OperationRepositoryImpl implements OperationRepository {
         stmt.setBigDecimal(6, operation.getAmount());
         stmt.setBigDecimal(7, operation.getMoneyBefore());
         stmt.setBigDecimal(8, operation.getMoneyAfter());
-        boolean res = stmt.execute();
+        stmt.execute();
         stmt.close();
     }
 

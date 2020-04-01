@@ -80,7 +80,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         stmt.setString(2, account.getClientId());
         stmt.setBigDecimal(3, account.getAmount());
         stmt.setString(4, account.getAccCode());
-        boolean res = stmt.execute();
+        stmt.execute();
         stmt.close();
     }
 

@@ -1,16 +1,32 @@
 package utils;
 
 import bank.connection.DBConnection;
+import bank.entity.Account;
+import bank.repository.impl.AccountRepositoryImpl;
+import bank.repository.impl.OperationRepositoryImpl;
+import bank.repository.impl.UserRepositoryImpl;
+import bank.service.iface.AccountService;
+import bank.service.iface.OperationService;
+import bank.service.iface.UserService;
+import bank.service.impl.AccountServiceImpl;
+import bank.service.impl.OperationServiceImpl;
+import bank.service.impl.UserServiceImpl;
 import tasks.model.PhoneBook;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class CLI {
 
     private  static boolean setUpIsDone = false;
+    private OperationService operationService;
+    private AccountService accountService;
+    private UserService userService;
+    private String loggedInUserLogin;
 
     public void greeting() {
         System.out.println("Hello.");
@@ -26,8 +42,8 @@ public class CLI {
         }
 
         if (k == 2) {
-            JDBCTaskVars();
             setUp();
+            JDBCTaskVars();
             chooseVar();
         }
 
@@ -93,6 +109,7 @@ public class CLI {
         }
 
         if (k == 6) {
+            loggedInUserLogin = null;
             return;
         }
     }
@@ -149,18 +166,109 @@ public class CLI {
     }
 
     private void createUser() {
-
+        System.out.println("Enter login:");
+        String login = readLine();
+        if(userService.existUserByLogin(login)) {
+            System.out.println("User " + login + " is already exist." );
+            return;
+        }
+        System.out.println("Enter password:");
+        String password = readLine();
+        System.out.println("Enter phone:");
+        String phone = readLine();
+        System.out.println("Enter address:");
+        String address = readLine();
+        loggedInUserLogin = userService.createUser(login, password, phone, address);
+        System.out.println("User " + loggedInUserLogin + " successfully created and logged in.");
     }
 
     private void createAccount() {
-
+        if(loggedInUserLogin != null)
+        {
+            System.out.println("Enter currency (RUB,EUR,USD):");
+            String accCode = readLine();
+            String id = accountService.createAccount(loggedInUserLogin, accCode);
+            if (id == null)
+            {
+                System.out.println("Account haven't been created, please try again.");
+            }
+            else
+            {
+                System.out.println("Bank account with ID " + id + " with " + accCode + " currency successfully created.");
+            }
+        } else {
+            System.out.println("Log in first!");
+        }
     }
 
     private void authorization() {
+        if (loggedInUserLogin != null) {
+            System.out.println("User " + loggedInUserLogin + " is already authorized, please exit from account first " +
+                    "to change user profile");
+            return;
+        }
 
+        System.out.println("Enter login:");
+        String login = readLine();
+        System.out.println("Enter password:");
+        String password = readLine();
+        if(!userService.existUserByLogin(login)) {
+            System.out.println("User " + login + " doesn't exist." );
+            return;
+        }
+        loggedInUserLogin = userService.authorization(login, password);
+        System.out.println("User " + loggedInUserLogin + " successfully logged in.");
     }
 
-    private void addMoney() {}
+    private void addMoney() {
+        if(loggedInUserLogin != null)
+        {
+            System.out.println("Which account do you want to replenish? Enter number of account.");
+            List<Account> accounts = accountService.listOfUserAccounts(loggedInUserLogin);
+            if (accounts == null)
+            {
+                System.out.println("Accounts haven't been found");
+                return;
+            }
+            for (int i = 0; i < accounts.size(); i++)
+            {
+                Account current = accounts.get(i);
+                int index = i + 1;
+                System.out.println(index + ". Amount: " + current.getAmount() + ", currency " + current.getAccCode());
+            }
+            int var = 0;
+            String tmp = readLine();
+
+            if (StringUtils.isNumeric(tmp)) {
+                var = Integer.parseInt(tmp);
+            }
+            if (var == 0 || var > accounts.size()){
+                System.out.println("Wrong account number. Try again.");
+                return;
+            }
+            System.out.println("Enter currency you want to add (RUB,EUR,USD):");
+            String chosenCurrency = readLine();
+            System.out.println("How much do you want to add?");
+            String amountString = readLine();
+            if (!StringUtils.isNumeric(amountString)) {
+                System.out.println("Wrong amount, enter number, try again.");
+                return;
+            }
+            int amount = Integer.parseInt(amountString);
+            if(amount <= 0) {
+                System.out.println("Wrong amount, enter positive number, try again.");
+                return;
+            }
+
+            BigDecimal amountAfterIncrease = accountService.increaseAmount(accounts.get(var - 1),
+                BigDecimal.valueOf(amount), chosenCurrency);
+            if (amountAfterIncrease != null) {
+                System.out.println("Amount after increase is " + amountAfterIncrease);
+            } else {
+                System.out.println("Couldn't add money to account");
+            }
+        }
+    }
 
     private void transferMoney() {}
 
@@ -247,14 +355,25 @@ public class CLI {
         return tmp;
     }
 
-    private static void setUp() {
+    private void setUp() {
         if (!setUpIsDone) {
             boolean createConnection = DBConnection.createConnection();
             if(!createConnection) {
                 throw new RuntimeException("Can't create connection, stop");
             }
-            setUpIsDone = true;
+
+            if(userService == null)
+                userService = new UserServiceImpl(new UserRepositoryImpl());
+
+            if(accountService == null)
+                accountService = new AccountServiceImpl(new AccountRepositoryImpl(), userService);
+
+            if(operationService == null)
+                operationService = new OperationServiceImpl(new OperationRepositoryImpl());
+
             DBConnection.createTables();
+            setUpIsDone = true;
         }
     }
+
 }
