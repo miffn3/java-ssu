@@ -1,4 +1,7 @@
 package ssu.bank.repo.iface;
 
-public interface AccountRepository {
+import org.springframework.data.repository.CrudRepository;
+import ssu.bank.entity.Account;
+
+public interface AccountRepository extends CrudRepository<Account, Long> {
 }
