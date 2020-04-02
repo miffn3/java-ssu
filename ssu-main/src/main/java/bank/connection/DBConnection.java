@@ -9,7 +9,8 @@ public class DBConnection {
     private static java.sql.Connection connection;
     private static final String USER = "test";
     private static final String PASSWORD = "test";
-    private static final String URL = "jdbc:mysql://localhost:3306/bank?useUnicode=yes&useSSL=false";
+    private static final String URL = "jdbc:mysql://localhost:3306/?useUnicode=yes&useSSL=false" +
+            "&createIfNotExists=true";
 
     public static boolean createConnection() {
         try {
