@@ -2,33 +2,31 @@ package ssu.bank.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ssu.bank.entity.User;
-import ssu.bank.repo.iface.AccountRepository;
 import ssu.bank.repo.iface.UserRepository;
-import ssu.bank.service.iface.JwtUserDetailsService;
 
 import java.util.ArrayList;
 
 @Component
-public class JwtUserDetailsServiceImpl implements JwtUserDetailsService
-{
+public class JwtUserDetailsService implements UserDetailsService {
 	private UserRepository userRepository;
 
 	@Autowired
-	public JwtUserDetailsServiceImpl(UserRepository userRepository) {
+	public JwtUserDetailsService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{
-		User user = userRepository.findByLogin(login);
+		User user = userRepository.findByUsername(username);
 		if (user == null) {
-			throw new UsernameNotFoundException("User not found with login: " + login);
+			throw new UsernameNotFoundException("User not found with username: " + username);
 		}
-		return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(),
+		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
 				new ArrayList<>());
 	}
 }

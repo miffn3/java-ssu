@@ -28,8 +28,7 @@ public class Account {
 	@Column(name = "acc_Code")
 	private String accCode;
 
-	public Account(Long id, Long clientId, String accCode) {
-		this.id = id;
+	public Account(Long clientId, String accCode) {
 		this.clientId = clientId;
 		this.amount = BigDecimal.ZERO;
 		this.accCode = accCode;

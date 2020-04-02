@@ -20,8 +20,9 @@ public class ImplConfig {
 	}
 
 	@Bean
-	public AccountService accountService(AccountRepository accountRepository) {
-		return new AccountServiceImpl(accountRepository);
+	public AccountService accountService(AccountRepository accountRepository, UserService userService,
+	                                     OperationService operationService) {
+		return new AccountServiceImpl(accountRepository, userService, operationService);
 	}
 
 	@Bean

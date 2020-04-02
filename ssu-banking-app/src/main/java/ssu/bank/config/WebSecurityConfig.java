@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ssu.bank.security.JwtAuthenticationEntryPoint;
 import ssu.bank.security.JwtRequestFilter;
-import ssu.bank.service.iface.JwtUserDetailsService;
+import ssu.bank.service.impl.JwtUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -79,7 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/**/*.css",
 						"/**/*.js"
 				).permitAll()
-				.antMatchers("/accounts/signup", "/accounts/signin", "/accounts/info/all")
+				.antMatchers("/users/signup", "/users/signin")
 				.permitAll()
 				.antMatchers("/configuration/ui", "/webjars/**", "/swagger-ui.html", "/swagger-resources", "/configuration/security", "/v2/api-docs").permitAll()
 				.anyRequest()

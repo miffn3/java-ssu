@@ -21,13 +21,25 @@ public class Operation {
 	@Column
 	private String currency;
 	@Column(name ="account_From")
-	private String accountFrom;
+	private Long accountFrom;
 	@Column(name ="account_To")
-	private String accountTo;
+	private Long accountTo;
 	@Column
 	private BigDecimal amount;
 	@Column(name ="money_Before")
 	private BigDecimal moneyBefore;
 	@Column(name ="money_After")
 	private BigDecimal moneyAfter;
+
+	public Operation(String date, String currency, Long accountFrom, Long accountTo, BigDecimal amount,
+	                 BigDecimal moneyBefore, BigDecimal moneyAfter)
+	{
+		this.date = date;
+		this.currency = currency;
+		this.accountFrom = accountFrom;
+		this.accountTo = accountTo;
+		this.amount = amount;
+		this.moneyBefore = moneyBefore;
+		this.moneyAfter = moneyAfter;
+	}
 }
