@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import ssu.bank.entity.JwtRequest;
 import ssu.bank.entity.User;
 import ssu.bank.security.JwtToken;
-import ssu.bank.service.impl.JwtUserDetailsService;
 import ssu.bank.service.iface.UserService;
+import ssu.bank.service.impl.JwtUserDetailsService;
 
 import javax.xml.bind.ValidationException;
 

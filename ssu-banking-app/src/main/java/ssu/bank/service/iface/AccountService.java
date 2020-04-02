@@ -9,8 +9,8 @@ import java.util.List;
 @Service
 public interface AccountService {
 	void createAccount(String login, String accCode);
-	BigDecimal increaseAmount(Account account, BigDecimal amount, String chosenCurrency);
-	boolean moneyTransfer(Account account, String phone, BigDecimal amount);
-	BigDecimal moneyTransfer(Account accountFrom, Account accountTo, BigDecimal amount);
+	BigDecimal increaseAmount(Long accountId, BigDecimal amount, String chosenCurrency);
+	BigDecimal moneyTransfer(Long accountId, String phone, BigDecimal amount);
+	BigDecimal moneyTransfer(Long accountFromId, Long accountToId, BigDecimal amount);
 	List<Account> listOfUserAccounts(String username);
 }

@@ -34,7 +34,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public BigDecimal increaseAmount(Account account, BigDecimal amount, String chosenCurrency) {
+	public BigDecimal increaseAmount(Long accountId, BigDecimal amount, String chosenCurrency) {
+		Account account = accountRepository.findById(accountId).get();
 		String accCurrency = account.getAccCode();
 		if (!chosenCurrency.toUpperCase().equals(accCurrency))
 			amount = exchange(amount, accCurrency, chosenCurrency);
@@ -47,13 +48,18 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean moneyTransfer(Account account, String phone, BigDecimal amount) {
+	public BigDecimal moneyTransfer(Long accountId, String phone, BigDecimal amount) {
+		Account account = accountRepository.findById(accountId).get();
 		User userTo = userService.getUserByPhone(phone);
 		Account accountTo;
 		accountTo = accountRepository.findByClientId(userTo.getId()).get(0);
+		if (account.equals(accountTo))
+			return null;
 		String accToCurrency = accountTo.getAccCode();
 		String accFromCurrency = account.getAccCode();
 		BigDecimal oldAmountFrom = account.getAmount();
+		if (oldAmountFrom.compareTo(amount) < 0)
+			return null;
 		BigDecimal newAmountFrom = account.getAmount().subtract(amount);
 		BigDecimal newAmountTo;
 		if (!accToCurrency.toUpperCase().equals(accFromCurrency)) {
@@ -71,14 +77,20 @@ public class AccountServiceImpl implements AccountService {
 
 		operationService.addOperation(dtf.format(LocalDateTime.now()), accFromCurrency, account.getId(),
 				accountTo.getId(), amount, oldAmountFrom, newAmountFrom);
-		return true;
+		return newAmountFrom;
 	}
 
 	@Override
-	public BigDecimal moneyTransfer(Account accountFrom, Account accountTo, BigDecimal amount) {
+	public BigDecimal moneyTransfer(Long accountFromId, Long accountToId, BigDecimal amount) {
+		if(accountFromId.equals(accountToId))
+			return null;
+		Account accountFrom = accountRepository.findById(accountFromId).get();
+		Account accountTo = accountRepository.findById(accountToId).get();
 		String accToCurrency = accountTo.getAccCode();
 		String accFromCurrency = accountFrom.getAccCode();
 		BigDecimal oldAmountFrom = accountFrom.getAmount();
+		if (oldAmountFrom.compareTo(amount) < 0)
+			return null;
 		BigDecimal newAmountFrom = accountFrom.getAmount().subtract(amount);
 		BigDecimal newAmountTo;
 		if (!accToCurrency.toUpperCase().equals(accFromCurrency)) {
