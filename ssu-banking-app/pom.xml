@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<springboot.ver>2.1.3.RELEASE</springboot.ver>
+		<springboot.ver>2.5.12</springboot.ver>
 		<swagger.ver>2.9.2</swagger.ver>
 		<start-class>ssu.bank.SsuBankingApplication</start-class>
 	</properties>
